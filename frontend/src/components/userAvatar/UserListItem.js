@@ -2,9 +2,10 @@ import { Avatar } from "@chakra-ui/avatar";
 import { Box, Text } from "@chakra-ui/layout";
 import { ChatState } from "../../Context/ChatProvider";
 
-const UserListItem = ({ handleFunction }) => {
-  const { user } = ChatState();
-
+const UserListItem = ({ handleFunction,user }) => {
+  //const { user } = ChatState();
+// Actually this user is account owner, but we need all user  those are come from search result and it was props from parent components. 
+  // so we will just distracture user 
   return (
     <Box
       onClick={handleFunction}
