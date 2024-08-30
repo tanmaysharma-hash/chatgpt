@@ -31,12 +31,6 @@ const allUsers = asyncHandler(async (req, res) => {
 // });
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { success } = newUserSchema.safeParse(req.body);
-  if (!success) {
-    return res.status(400).json({
-      message: "Invalid inputs",
-    });
-  }
   const { name, email, password, pic } = req.body;
 
   if (!name || !email || !password) {
@@ -82,12 +76,6 @@ const registerUser = asyncHandler(async (req, res) => {
 //   password: zod.string(),
 // });
 const authUser = asyncHandler(async (req, res) => {
-  const { success } = authUserSchema.safeParse(rew.body);
-  if (!success) {
-    return res.status(401).json({
-      message: "Invalid Inputs",
-    });
-  }
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
