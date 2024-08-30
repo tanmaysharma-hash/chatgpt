@@ -7,6 +7,7 @@ import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { ChatState } from "../../Context/ChatProvider";
+import * as zod from "zod";
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -21,6 +22,27 @@ const Login = () => {
 
   const submitHandler = async () => {
     setLoading(true);
+    const loginSchema = zod.object({
+      email: zod.string().email(),
+      password: zod.string(),
+    });
+
+    const { success } = await loginSchema.safeParseAsync({
+      email: email,
+      password: password,
+    });
+    if (!success) {
+      toast({
+        title: "Check Input for errors",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
+
     if (!email || !password) {
       toast({
         title: "Please Fill all the Feilds",

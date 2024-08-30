@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
+const zod = require("zod");
 
 //@description     Get or Search all users
 //@route           GET /api/user?search=
@@ -22,7 +23,20 @@ const allUsers = asyncHandler(async (req, res) => {
 //@description     Register new user
 //@route           POST /api/user/
 //@access          Public
+
+// const newUserSchema = zod.object({
+//   name: zod.string(),
+//   email: zod.string().email(),
+//   password: zod.string(),
+// });
+
 const registerUser = asyncHandler(async (req, res) => {
+  const { success } = newUserSchema.safeParse(req.body);
+  if (!success) {
+    return res.status(400).json({
+      message: "Invalid inputs",
+    });
+  }
   const { name, email, password, pic } = req.body;
 
   if (!name || !email || !password) {
@@ -62,7 +76,18 @@ const registerUser = asyncHandler(async (req, res) => {
 //@description     Auth the user
 //@route           POST /api/users/login
 //@access          Public
+
+// const authUserSchema = zod.object({
+//   email: zod.string().email(),
+//   password: zod.string(),
+// });
 const authUser = asyncHandler(async (req, res) => {
+  const { success } = authUserSchema.safeParse(rew.body);
+  if (!success) {
+    return res.status(401).json({
+      message: "Invalid Inputs",
+    });
+  }
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
