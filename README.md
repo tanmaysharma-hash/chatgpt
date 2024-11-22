@@ -17,9 +17,10 @@ Uses Socket.io for real time communication and stores user details in encrypted 
 
 ![](https://github.com/piyush-eon/mern-chat-app/blob/master/screenshots/group%20%2B%20notif.PNG)
 ## Run Locally
-***Please remember that you have to create a .env file(for environment variables) to set up port for api testing as well as the connection URI of MongoDB.***
+***Please remember that you have to create a .env file(for environment variables) to set up port for api testing , the connection URI of MongoDB , also to set the port number and to set the JWT Encryption Secret Key***
 
 Clone the project
+
 
 ```bash
   git clone https://github.com/piyush-eon/mern-chat-app
