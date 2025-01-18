@@ -4,13 +4,14 @@ const User = require("../models/userModel");
 const Chat = require("../models/chatModel");
 
 //@description     Get all Messages
-//@route           GET /api/Message/:chatId
+//@route           GET /api/message/:chatId
 //@access          Protected
 const allMessages = asyncHandler(async (req, res) => {
   try {
     const messages = await Message.find({ chat: req.params.chatId })
       .populate("sender", "name pic email")
-      .populate("chat");
+      .populate("chat")
+      .populate("reactions.user", "name pic email"); // Populate reaction users
     res.json(messages);
   } catch (error) {
     res.status(400);
@@ -19,7 +20,7 @@ const allMessages = asyncHandler(async (req, res) => {
 });
 
 //@description     Create New Message
-//@route           POST /api/Message/
+//@route           POST /api/message/
 //@access          Protected
 const sendMessage = asyncHandler(async (req, res) => {
   const { content, chatId } = req.body;
@@ -29,14 +30,14 @@ const sendMessage = asyncHandler(async (req, res) => {
     return res.sendStatus(400);
   }
 
-  var newMessage = {
+  const newMessage = {
     sender: req.user._id,
     content: content,
     chat: chatId,
   };
 
   try {
-    var message = await Message.create(newMessage);
+    let message = await Message.create(newMessage);
 
     message = await message.populate("sender", "name pic").execPopulate();
     message = await message.populate("chat").execPopulate();
@@ -54,4 +55,46 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { allMessages, sendMessage };
+//@description     React to a Message
+//@route           POST /api/message/:messageId/react
+//@access          Protected
+const reactToMessage = asyncHandler(async (req, res) => {
+  const { emoji } = req.body;
+
+  if (!emoji) {
+    return res.status(400).json({ message: "Emoji is required" });
+  }
+
+  try {
+    const message = await Message.findById(req.params.messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Check if the user has already reacted to the message
+    const existingReaction = message.reactions.find(
+      (reaction) => reaction.user.toString() === req.user._id.toString()
+    );
+
+    if (existingReaction) {
+      // Update the existing reaction
+      existingReaction.emoji = emoji;
+    } else {
+      // Add a new reaction
+      message.reactions.push({ emoji, user: req.user._id });
+    }
+
+    await message.save();
+
+    const updatedMessage = await Message.findById(req.params.messageId)
+      .populate("reactions.user", "name pic email");
+
+    res.json(updatedMessage);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
+module.exports = { allMessages, sendMessage, reactToMessage };
