@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Fail script on errors and undefined variables
+set -euo pipefail
+
 # Update package list and install dependencies
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y curl git nginx unzip
@@ -30,21 +33,22 @@ JWT_SECRET="your-secret-key"
 EOF
 
 # Install backend dependencies
-sudo npm install --force
+npm install --force
 pm2 start server.js -i max --name backend
 pm2 save
 
 # Install frontend dependencies and build React app
 cd ../frontend
-sudo npm install --legacy-peer-deps
-sudo npm run build
+npm install --legacy-peer-deps
+npm run build
 
-# Move frontend build to serve with Nginx
+# Move frontend build with proper permissions
 sudo mv build /var/www/frontend
+sudo chown -R www-data:www-data /var/www/frontend
 
-# Copy Nginx Configure File to sites-available 
+# Secure Nginx configuration
 sudo cp config/nginx.conf /etc/nginx/sites-available/
-
+sudo sed -i 's/# server_tokens off;/server_tokens off;/g' /etc/nginx/nginx.conf
 
 # Enable the Nginx configuration and restart Nginx
 sudo ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
