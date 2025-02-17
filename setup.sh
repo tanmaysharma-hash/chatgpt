@@ -43,7 +43,7 @@ npm install --legacy-peer-deps
 npm run build
 
 # Move frontend build with proper permissions
-sudo mv build /var/www/frontend
+sudo cp -R build /var/www/frontend
 sudo chown -R www-data:www-data /var/www/frontend
 
 # Secure Nginx configuration
