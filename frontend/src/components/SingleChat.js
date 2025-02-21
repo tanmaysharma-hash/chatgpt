@@ -11,11 +11,11 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
-const ENDPOINT = `http://${process.env.PUBLIC_IP}`; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+require("dotenv").config();
+const ENDPOINT = `http://${process.env.REACT_APP_PUBLIC_IP}`; // "https://talk-a-tive.herokuapp.com"; -> After deployment
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
