@@ -1,20 +1,22 @@
-# Use official Node.js 18 Alpine image
+# Use official Node.js 18 Alpine image as base
 FROM node:18-alpine
 
-# Set working directory
+# Create app directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json .
+# Install only production dependencies
+COPY package.json ./
+RUN yarn install --production --frozen-lockfile
 
-# Install dependencies
-RUN yarn install --frozen-lockfile
-
-# Copy all backend files
+# Copy only necessary source files (excluding dev files via .dockerignore)
 COPY . .
 
-# Expose application port
+# Expose the backend port
 EXPOSE 5000
 
-# Start the application
+# Use non-root user for security (optional, requires node to own /app)
+RUN addgroup app && adduser -S -G app app
+USER app
+
+# Start the app
 CMD ["node", "server.js"]

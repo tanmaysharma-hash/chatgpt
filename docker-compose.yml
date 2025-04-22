@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    container_name: backend-service
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    container_name: frontend-service
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # NGINX reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-service
+    ports:
+      - "80:80"  # Expose NGINX port 80 for frontend and API
+    volumes:
+      - ./frontend/config/default.conf:/etc/nginx/conf.d/default.conf  # NGINX config to route traffic
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
