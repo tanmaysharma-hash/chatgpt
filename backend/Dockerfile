@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install only production dependencies
 COPY package.json ./
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --production
 
 # Copy only necessary source files (excluding dev files via .dockerignore)
 COPY . .
