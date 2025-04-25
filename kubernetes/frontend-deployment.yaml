@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: iiamabhishek05/mern-app-frontend:v47
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: frontend-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 3000
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 20
+        # readinessProbe:
+        #   httpGet:
+        #     path: /api/health
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80          # The port exposed inside the cluster
+      targetPort: 80    # The port your frontend container listens on

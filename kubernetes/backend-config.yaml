@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  MONGO_URI: ""
+  JWT_SECRET: ""
+  NODE_ENV: ""
+  PORT: ""
