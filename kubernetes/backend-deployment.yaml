@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: iiamabhishek05/mern-app-backend:v79
+        image: iiamabhishek05/mern-app-backend:v81
         ports:
         - containerPort: 5000
         envFrom:
