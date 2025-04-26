@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: iiamabhishek05/mern-app-frontend:v47
+        image: iiamabhishek05/mern-app-frontend:v72
         ports:
         - containerPort: 80
         envFrom:
