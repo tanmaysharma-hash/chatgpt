@@ -6,4 +6,4 @@ data:
   MONGO_URI: ""
   JWT_SECRET: ""
   NODE_ENV: ""
-  PORT: ""
+  PORT: "5000"
