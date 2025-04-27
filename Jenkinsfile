@@ -79,22 +79,16 @@ pipeline {
 
         stage('Security Scan - Trivy') {
             steps {
-                script {
-                    sh '''
-                        mkdir -p trivy-reports
+                sh """
+                    mkdir -p trivy-reports
 
-                        # Frontend scan
-                        trivy image --format template --template "/opt/trivy-contrib/html.tpl" -o trivy-reports/frontend-trivy-report.html $DOCKER_USER/mern-app-frontend:latest
+                    trivy image --format template --template @trivy-templates/html.tpl -o trivy-reports/frontend-trivy.html $DOCKER_USER/mern-app-frontend:latest
 
-                        # Backend scan
-                        trivy image --format template --template "/opt/trivy-contrib/html.tpl" -o trivy-reports/backend-trivy-report.html $DOCKER_USER/mern-app-backend:latest
-                    '''
-
-                    archiveArtifacts artifacts: 'trivy-reports/**/*.html', fingerprint: true
-                }
+                    trivy image --format template --template @trivy-templates/html.tpl -o trivy-reports/backend-trivy.html $DOCKER_USER/mern-app-backend:latest
+                """
+                archiveArtifacts artifacts: 'trivy-reports/*.html', fingerprint: true
             }
         }
-
 
         stage('Security Scan - OWASP') {
             steps {
