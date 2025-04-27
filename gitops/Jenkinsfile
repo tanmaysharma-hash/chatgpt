@@ -108,10 +108,10 @@ pipeline {
 
         stage('Docker Cleanup local images') {
             steps {
-                sh '''
+                sh """
                     docker rmi $DOCKER_USER/mern-app-frontend:v${params.PARENT_BUILD_NUMBER}
                     docker rmi $DOCKER_USER/mern-app-backend:v${params.PARENT_BUILD_NUMBER}
-                '''
+                """
             }
         }
     }
