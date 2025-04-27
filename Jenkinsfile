@@ -45,37 +45,37 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         withSonarQubeEnv('sonarqube') {
-        //             script {
-        //                 // Frontend analysis
-        //                 sh """
-        //                     $SCANNER_HOME/bin/sonar-scanner \
-        //                         -Dsonar.projectKey=mern-frontend \
-        //                         -Dsonar.sources=./frontend \
-        //                         -Dsonar.host.url=http://localhost:9000 \
-        //                 """
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    script {
+                        // Frontend analysis
+                        sh """
+                            $SCANNER_HOME/bin/sonar-scanner \
+                                -Dsonar.projectKey=mern-frontend \
+                                -Dsonar.sources=./frontend \
+                                -Dsonar.host.url=http://localhost:9000 \
+                        """
                         
-        //                 // Backend analysis
-        //                 sh """
-        //                     $SCANNER_HOME/bin/sonar-scanner \
-        //                         -Dsonar.projectKey=mern-backend \
-        //                         -Dsonar.sources=./backend \
-        //                         -Dsonar.host.url=http://localhost:9000 \
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
+                        // Backend analysis
+                        sh """
+                            $SCANNER_HOME/bin/sonar-scanner \
+                                -Dsonar.projectKey=mern-backend \
+                                -Dsonar.sources=./backend \
+                                -Dsonar.host.url=http://localhost:9000 \
+                        """
+                    }
+                }
+            }
+        }
 
-        // stage('Quality Gate Check') {
-        //     steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar'
-        //         }
-        //     }
-        // }
+        stage('Quality Gate Check') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar'
+                }
+            }
+        }
 
         stage('Security Scan - Trivy') {
             steps {
