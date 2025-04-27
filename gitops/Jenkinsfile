@@ -1,0 +1,105 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Clean the Workspace') {
+            steps {
+                cleanWs()        
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'master',
+                url: 'https://github.com/iiamabhishek/mern-chat-app.git',
+                credentialsId: 'github'
+            }
+        }
+
+        stage('Verify Parameters') {
+            steps {
+                script {
+                    if (!params.PARENT_BUILD_NUMBER) {
+                        error "PARENT_BUILD_NUMBER parameter is missing!"
+                    } else {
+                        echo "✅ Received PARENT_BUILD_NUMBER: ${params.PARENT_BUILD_NUMBER}"
+                    }
+                }
+            }
+        }
+
+        stage('Update Kubernetes Image Tags') {
+            steps {
+                script {
+                    dir('kubernetes') {
+                        def tag = params.PARENT_BUILD_NUMBER
+
+                        // Update backend image tag
+                        sh "sed -i 's|iiamabhishek05/mern-app-backend:.*|iiamabhishek05/mern-app-backend:v${tag}|' backend-deployment.yaml"
+
+                        // Update frontend image tag
+                        sh "sed -i 's|iiamabhishek05/mern-app-frontend:.*|iiamabhishek05/mern-app-frontend:v${tag}|' frontend-deployment.yaml"
+
+                        echo "✅ Image tags updated to v${tag}"
+                    }
+                }
+            }
+        }
+
+        stage('Push Updated Kubernetes Manifests to GitHub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                        sh """
+                            git config user.name "${GIT_USERNAME}"
+                            git config user.email "${GIT_USERNAME}@users.noreply.github.com"
+
+                            git pull https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/iiamabhishek/mern-chat-app.git master
+
+                            git add *.yaml
+
+                            # Check if there are any staged changes
+                            if ! git diff --cached --quiet; then
+                                git commit -m "Update Kubernetes image tags to v${params.PARENT_BUILD_NUMBER}"
+                                git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/iiamabhishek/mern-chat-app.git HEAD:master
+                                echo "✅ Changes committed and pushed!"
+                            else
+                                echo "ℹ️ No changes to push."
+                            fi
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Backup Kubernetes Resources') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh '''
+                        mkdir -p kube_backup
+                        kubectl get all -o yaml > kube_backup/kubernetes-backup-$(date +%F-%H-%M).yaml
+                        echo "✅ Kubernetes backup created!"
+                    '''
+                }
+            }
+        }
+
+        stage('Apply Kubernetes Manifests') {
+            steps {
+                script {
+                    dir('kubernetes') {
+                        withKubeConfig([credentialsId: 'kubeconfig']) {
+                            sh '''
+                                kubectl get pod
+                                kubectl apply -f .
+                                
+                                echo "✅ Kubernetes Menifest File applied successfully!"
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
