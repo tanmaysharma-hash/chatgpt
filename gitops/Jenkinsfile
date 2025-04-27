@@ -101,5 +101,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Cleanup local images') {
+            steps {
+                sh '''
+                    docker rmi $DOCKER_USER/mern-app-frontend:latest
+                    docker rmi $DOCKER_USER/mern-app-frontend:v$BUILD_NUMBER
+                    docker rmi $DOCKER_USER/mern-app-backend:latest
+                    docker rmi $DOCKER_USER/mern-app-backend:v$BUILD_NUMBER
+                '''
+            }
+        }
     }
 }
