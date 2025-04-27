@@ -82,11 +82,11 @@ pipeline {
                 sh """
                     mkdir -p trivy-reports
 
-                    trivy image --format template --template @/home/abhisheks/trivy-templates/html.tpl -o trivy-reports/frontend-trivy.html $DOCKER_USER/mern-app-frontend:latest
-
-                    trivy image --format template --template @/home/abhisheks/trivy-templates/html.tpl -o trivy-reports/backend-trivy.html $DOCKER_USER/mern-app-backend:latest
+                    trivy image --format table -o trivy-reports/frontend-trivy.txt $DOCKER_USER/mern-app-frontend:latest
+                    trivy image --format table -o trivy-reports/backend-trivy.txt $DOCKER_USER/mern-app-backend:latest
                 """
-                archiveArtifacts artifacts: 'trivy-reports/*.html', fingerprint: true
+
+                archiveArtifacts artifacts: 'trivy-reports/*.txt', fingerprint: true
             }
         }
 
