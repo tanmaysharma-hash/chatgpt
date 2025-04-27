@@ -28,7 +28,7 @@ cd mern-app
 cd backend
 sudo tee .env > /dev/null <<EOF
 PORT=5000
-MONGO_URI="mongodb+srv://abhisonwal051993:HbDFMb71e2JYIQYz@cluster0.u8mv6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_URI="mongodb-name"
 JWT_SECRET="your-secret-key"
 NODE_ENV="production"
 EOF
@@ -40,10 +40,6 @@ pm2 save
 
 # Install frontend dependencies and build React app
 cd ../frontend
-
-# Getting ec2 Public ip in frontend .env 
-echo "PUBLIC_IP=$(curl -s https://api64.ipify.org)" > .env
-cat .env
 
 npm install --legacy-peer-deps
 npm run build
