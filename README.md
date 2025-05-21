@@ -1,4 +1,4 @@
-
+![image](https://github.com/user-attachments/assets/3b118c8e-bd93-4eb0-8628-b3ccdbe9c6cf)
 # Talk-A-Tive
 
 Talk-a-tive is a Full Stack Chatting App.
@@ -11,11 +11,10 @@ Uses Socket.io for real time communication and stores user details in encrypted 
 
 **Database:** Mongo DB
   
-## Demo
+## Demo Video
 
-[https://talk-a-tive.herokuapp.com/](https://talk-a-tive-7fgq.onrender.com)
+[https://MayureshDrive/](https://drive.google.com/file/d/1gGZbThEQUDHHVK7l5gJk0LZ8OIv6ES3I/view?usp=drive_link)
 
-![](https://github.com/piyush-eon/mern-chat-app/blob/master/screenshots/group%20%2B%20notif.PNG)
 ## Run Locally
 
 Clone the project
