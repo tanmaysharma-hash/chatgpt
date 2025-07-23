@@ -1,4 +1,4 @@
-alk-A-Tive 💬
+Talk-A-Tive 💬
 A full-stack real-time chat application built using the MERN stack with real-time communication enabled through Socket.io. Users can chat one-on-one or in groups with typing indicators and notifications.
 
 🔧 Tech Stack
